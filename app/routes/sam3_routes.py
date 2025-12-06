@@ -43,9 +43,7 @@ async def generate_mask(
         try:
             box_obj = Box(**json.loads(box))
         except (json.JSONDecodeError, ValueError, TypeError) as e:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid box JSON: {str(e)}"
-            )
+            raise HTTPException(status_code=400, detail=f"Invalid box JSON: {str(e)}")
 
     pil_image = await read_upload_file_as_image(image)
     generated_mask = await service.generate_mask(pil_image, points_list, box_obj)

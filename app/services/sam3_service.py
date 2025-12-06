@@ -17,7 +17,5 @@ class Sam3Service(ABC):
         pass
 
     @abstractmethod
-    def generate_masks(
-        self, image: Image.Image, text: str
-    ) -> List[GeneratedMask]:
+    def generate_masks(self, image: Image.Image, text: str) -> List[GeneratedMask]:
         pass

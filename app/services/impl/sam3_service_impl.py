@@ -9,11 +9,7 @@ from transformers import (
     Sam3TrackerProcessor,
 )
 
-from app.schemas.common_schemas import (
-    Box,
-    GeneratedMask,
-    MaskLabeledPoint,
-)
+from app.schemas.common_schemas import Box, GeneratedMask, MaskLabeledPoint
 from app.services.sam3_service import Sam3Service
 
 
