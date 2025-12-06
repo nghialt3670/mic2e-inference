@@ -68,4 +68,4 @@ jobs:
           script: |
             cd ${{ secrets.SERVER_PATH }}
             docker compose pull inference
-            docker compose up -d storage
+            docker compose up -d inference
