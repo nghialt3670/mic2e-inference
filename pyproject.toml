@@ -19,6 +19,7 @@ dependencies = [
     "torchvision>=0.24.1",
     "transformers>=4.57.3",
     "uvicorn>=0.38.0",
+    "xformers>=0.0.23",
 ]
 
 [dependency-groups]
@@ -29,3 +30,4 @@ dev = [
 
 [tool.uv.sources]
 transformers = { git = "https://github.com/huggingface/transformers.git" }
+diffusers = { git = "https://github.com/huggingface/diffusers" }

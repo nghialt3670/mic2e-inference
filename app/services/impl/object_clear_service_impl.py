@@ -12,8 +12,8 @@ class ObjectClearServiceImpl(ObjectClearService):
     def __init__(
         self,
         pipeline: ObjectClearPipeline,
-        num_inference_steps: int = 20,
-        guidance_scale: float = 2.5,
+        num_inference_steps: int = 8,  # Reduced from 20 to 8 for speed
+        guidance_scale: float = 2.0,  # Reduced from 2.5 to 2.0 for speed
         seed: int = 42,
     ):
         self._pipeline = pipeline
@@ -29,8 +29,9 @@ class ObjectClearServiceImpl(ObjectClearService):
 
         original_size = image.size
 
-        image_resized = resize_by_short_side(image, 512, resample=Image.BICUBIC)
-        mask_resized = resize_by_short_side(mask, 512, resample=Image.NEAREST)
+        # Reduced resolution from 512 to 384 for speed/memory
+        image_resized = resize_by_short_side(image, 384, resample=Image.BILINEAR)  # BILINEAR faster than BICUBIC
+        mask_resized = resize_by_short_side(mask, 384, resample=Image.NEAREST)
 
         w, h = image_resized.size
 
