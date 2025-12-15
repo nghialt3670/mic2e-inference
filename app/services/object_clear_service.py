@@ -7,6 +7,6 @@ from PIL import Image
 class ObjectClearService(ABC):
     @abstractmethod
     async def inpaint(
-        self, image: Image.Image, mask: Image.Image, label: Optional[str] = None
+        self, image: Image.Image, mask: Image.Image, prompt: Optional[str] = None
     ) -> Image.Image:
         pass

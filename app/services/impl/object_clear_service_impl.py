@@ -22,7 +22,7 @@ class ObjectClearServiceImpl(ObjectClearService):
         self._seed = seed
 
     async def inpaint(
-        self, image: Image.Image, mask: Image.Image, label: Optional[str] = None
+        self, image: Image.Image, mask: Image.Image, prompt: Optional[str] = None
     ) -> Image.Image:
         image = image.convert("RGB")
         mask = mask.convert("L")
@@ -37,11 +37,7 @@ class ObjectClearServiceImpl(ObjectClearService):
 
         device = self._pipeline.unet.device
         generator = torch.Generator(device=device).manual_seed(self._seed)
-        prompt = (
-            f"remove the instance of {label}"
-            if label
-            else "remove the instance of object"
-        )
+        prompt = prompt or "remove the instance of object"
         result = self._pipeline(
             prompt=prompt,
             image=image_resized,
