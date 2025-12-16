@@ -1,9 +1,33 @@
-# Place GLIGEN checkpoint files here
+# GLIGEN Checkpoint Directory
 
-Download checkpoints from:
-- Generation (text-box): https://huggingface.co/gligen/gligen-generation-text-box/resolve/main/diffusion_pytorch_model.bin
-- Inpainting (text-box): https://huggingface.co/gligen/gligen-inpainting-text-box/resolve/main/diffusion_pytorch_model.bin
+This directory stores GLIGEN model checkpoints.
 
-Rename the downloaded files to:
-- checkpoint_generation_text.pth
-- checkpoint_inpainting_text.pth
+## Automatic Download (Recommended)
+
+Checkpoints are automatically downloaded on first startup when:
+- `GLIGEN_AUTO_DOWNLOAD_GENERATION=true` for generation model (default)
+- `GLIGEN_AUTO_DOWNLOAD_INPAINTING=true` for inpainting model (default)
+- `LOAD_GLIGEN=true`
+
+Models download separately - only enable the ones you need!
+No manual download needed!
+
+## Manual Download (Alternative)
+
+If auto-download is disabled, download manually:
+
+1. Generation checkpoint:
+   wget https://huggingface.co/gligen/gligen-generation-text-box/resolve/main/diffusion_pytorch_model.bin \
+     -O checkpoint_generation_text.pth
+
+2. Inpainting checkpoint:
+   wget https://huggingface.co/gligen/gligen-inpainting-text-box/resolve/main/diffusion_pytorch_model.bin \
+     -O checkpoint_inpainting_text.pth
+
+## Docker Usage
+
+In docker-compose.yml, mount this directory as a volume:
+  volumes:
+    - gligen_checkpoints:/app/app/external/GLIGEN/gligen_checkpoints
+
+This ensures checkpoints persist between deployments and are only downloaded once.
