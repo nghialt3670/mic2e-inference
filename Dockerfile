@@ -24,4 +24,5 @@ ENV PORT=8000
 ENV HF_HOME=/root/.cache/huggingface
 EXPOSE 8000
 
-CMD ["uv", "run", "python", "run.py"]
+CMD [".venv/bin/python", "run.py"]
+
