@@ -11,3 +11,7 @@ wheels/
 
 # Environment variables
 .env
+
+# External checkpoints
+app/external/GLIGEN/gligen_checkpoints/checkpoint_generation_text.pth
+app/external/GLIGEN/gligen_checkpoints/checkpoint_inpainting_text.pth
