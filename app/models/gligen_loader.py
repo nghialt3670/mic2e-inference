@@ -6,6 +6,16 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
+from app.env import (
+    GLIGEN_AUTO_DOWNLOAD_GENERATION,
+    GLIGEN_AUTO_DOWNLOAD_INPAINTING,
+    GLIGEN_CHECKPOINT_DIR,
+)
+from app.utils.checkpoint_downloader import (
+    ensure_gligen_generation_checkpoint,
+    ensure_gligen_inpainting_checkpoint,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,9 +34,22 @@ def load_gligen(app: FastAPI, device: str) -> None:
     from gligen_inference import load_ckpt
     from ldm.util import instantiate_from_config
     
+    # Determine checkpoint directory
+    if GLIGEN_CHECKPOINT_DIR:
+        checkpoint_dir = Path(GLIGEN_CHECKPOINT_DIR)
+    else:
+        checkpoint_dir = gligen_path / "gligen_checkpoints"
+    
     # Load GLIGEN generation model
     logger.info("Loading GLIGEN generation model...")
-    gligen_gen_ckpt = gligen_path / "gligen_checkpoints" / "checkpoint_generation_text.pth"
+    gligen_gen_ckpt = checkpoint_dir / "checkpoint_generation_text.pth"
+    
+    # Auto-download generation checkpoint if enabled
+    if GLIGEN_AUTO_DOWNLOAD_GENERATION and not gligen_gen_ckpt.exists():
+        logger.info("Downloading GLIGEN generation checkpoint...")
+        gen_available = ensure_gligen_generation_checkpoint(checkpoint_dir)
+        if not gen_available:
+            logger.warning("Failed to download GLIGEN generation checkpoint")
     
     if gligen_gen_ckpt.exists():
         (
@@ -56,7 +79,14 @@ def load_gligen(app: FastAPI, device: str) -> None:
     
     # Load GLIGEN inpainting model
     logger.info("Loading GLIGEN inpainting model...")
-    gligen_inp_ckpt = gligen_path / "gligen_checkpoints" / "checkpoint_inpainting_text.pth"
+    gligen_inp_ckpt = checkpoint_dir / "checkpoint_inpainting_text.pth"
+    
+    # Auto-download inpainting checkpoint if enabled
+    if GLIGEN_AUTO_DOWNLOAD_INPAINTING and not gligen_inp_ckpt.exists():
+        logger.info("Downloading GLIGEN inpainting checkpoint...")
+        inp_available = ensure_gligen_inpainting_checkpoint(checkpoint_dir)
+        if not inp_available:
+            logger.warning("Failed to download GLIGEN inpainting checkpoint")
     
     if gligen_inp_ckpt.exists():
         (

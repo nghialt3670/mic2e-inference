@@ -46,6 +46,25 @@ LOAD_GLIGEN=true
 LOAD_FLUX=false
 ```
 
+### GLIGEN Checkpoint Configuration
+
+```bash
+# Automatically download GLIGEN generation checkpoint from HuggingFace
+# Default: true
+GLIGEN_AUTO_DOWNLOAD_GENERATION=true
+
+# Automatically download GLIGEN inpainting checkpoint from HuggingFace
+# Default: true
+GLIGEN_AUTO_DOWNLOAD_INPAINTING=true
+
+# Custom directory for GLIGEN checkpoints (optional)
+# If not set, uses: app/external/GLIGEN/gligen_checkpoints
+# Useful for Docker volume mounts
+GLIGEN_CHECKPOINT_DIR=/path/to/checkpoints
+```
+
+**Note:** Generation and inpainting models are downloaded separately (~2GB each). Only enable the models you need to save bandwidth and storage.
+
 ## Example Configurations
 
 ### Minimal Setup (GLIGEN only)
