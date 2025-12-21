@@ -39,7 +39,15 @@ Loads GLIGEN models for grounded text-to-image generation and inpainting.
 - GLIGEN inpainting model (text-box)
 - Associated autoencoders, text encoders, and diffusion models
 
-**Environment variable:** `LOAD_GLIGEN=true` (default)
+**Environment variable:** `LOAD_GLIGEN=true`
+
+### Stable Diffusion Inpaint (`sd_inpaint_loader.py`)
+Loads the Stable Diffusion Inpainting pipeline for mask-based image inpainting.
+
+**Models loaded:**
+- Stable Diffusion Inpainting pipeline (runwayml/stable-diffusion-inpainting)
+
+**Environment variable:** `LOAD_SD_INPAINT=true`
 
 ### Flux (`flux_loader.py`)
 Loads the Flux pipeline for high-quality image generation.

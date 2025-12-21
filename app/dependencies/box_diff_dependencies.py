@@ -1,23 +1,23 @@
-import sys
-from pathlib import Path
-
 from fastapi import Request
-
-# Add BoxDiff to Python path
-boxdiff_path = Path(__file__).parent.parent / "external" / "BoxDiff"
-if str(boxdiff_path) not in sys.path:
-    sys.path.insert(0, str(boxdiff_path))
-
-from pipeline.sd_pipeline_boxdiff import BoxDiffPipeline
 
 from app.services.box_diff_service import BoxDiffService
 from app.services.impl.box_diff_service_impl import BoxDiffServiceImpl
+from app.utils.model_manager import get_model_manager
+from app.utils.model_loaders import load_box_diff_standalone
 
 
-def get_box_diff_pipeline(request: Request) -> BoxDiffPipeline:
-    return request.app.state.box_diff_pipeline
+def get_box_diff_pipeline(request: Request):
+    """Get BoxDiff pipeline, loading on-demand."""
+    manager = get_model_manager()
+    return manager.get_model("box_diff", request)
 
 
-def get_box_diff_service(request: Request) -> BoxDiffService:
-    pipeline = request.app.state.box_diff_pipeline
-    return BoxDiffServiceImpl(pipeline)
+async def get_box_diff_service(request: Request):
+    """Get BoxDiff service with automatic cleanup after request."""
+    manager = get_model_manager()
+    try:
+        pipeline = manager.get_model("box_diff", request)
+        service = BoxDiffServiceImpl(pipeline)
+        yield service
+    finally:
+        manager.cleanup_model("box_diff")

@@ -37,8 +37,12 @@ LOAD_BOX_DIFF=false
 # GLIGEN - Grounded Text-to-Image Generation
 # Used for: Text-box grounded generation and inpainting
 # Memory: ~4-6GB
-# Default: true (currently active service)
 LOAD_GLIGEN=true
+
+# Stable Diffusion Inpaint - Classic SD inpainting with masks
+# Used for: Inpainting images with binary masks
+# Memory: ~4-6GB
+LOAD_SD_INPAINT=false
 
 # Flux - High-Quality Image Generation
 # Used for: State-of-the-art text-to-image generation

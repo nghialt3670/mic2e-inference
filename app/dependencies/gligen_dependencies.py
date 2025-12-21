@@ -1,44 +1,41 @@
-import sys
-from pathlib import Path
-
 from fastapi import Request
-
-# Add GLIGEN to Python path
-gligen_path = Path(__file__).parent.parent / "external" / "GLIGEN"
-if str(gligen_path) not in sys.path:
-    sys.path.insert(0, str(gligen_path))
 
 from app.services.gligen_service import GligenService
 from app.services.impl.gligen_service_impl import GligenServiceImpl
+from app.utils.device_utils import get_device
+from app.utils.model_manager import get_model_manager
+from app.utils.model_loaders import load_gligen_standalone
 
 
 def get_gligen_generation_models(request: Request):
-    return (
-        request.app.state.gligen_generation_model,
-        request.app.state.gligen_generation_autoencoder,
-        request.app.state.gligen_generation_text_encoder,
-        request.app.state.gligen_generation_diffusion,
-        request.app.state.gligen_generation_config,
-    )
+    """Get GLIGEN generation models, loading on-demand."""
+    manager = get_model_manager()
+    models = manager.get_model("gligen", request)
+    return models[:5]  # gen_model, gen_autoencoder, gen_text_encoder, gen_diffusion, gen_config
 
 
 def get_gligen_inpainting_models(request: Request):
-    return (
-        request.app.state.gligen_inpainting_model,
-        request.app.state.gligen_inpainting_autoencoder,
-        request.app.state.gligen_inpainting_text_encoder,
-        request.app.state.gligen_inpainting_diffusion,
-        request.app.state.gligen_inpainting_config,
-    )
+    """Get GLIGEN inpainting models, loading on-demand."""
+    manager = get_model_manager()
+    models = manager.get_model("gligen", request)
+    return models[5:]  # inp_model, inp_autoencoder, inp_text_encoder, inp_diffusion, inp_config
 
 
-def get_gligen_service(request: Request) -> GligenService:
-    gen_models = get_gligen_generation_models(request)
-    inp_models = get_gligen_inpainting_models(request)
-    device = request.app.state.device
-    
-    return GligenServiceImpl(
-        *gen_models,
-        *inp_models,
-        device=device,
-    )
+async def get_gligen_service(request: Request):
+    """Get GLIGEN service with automatic cleanup after request."""
+    manager = get_model_manager()
+    try:
+        models = manager.get_model("gligen", request)
+        gen_models = models[:5]
+        inp_models = models[5:]
+        # Get the best available device dynamically
+        device = get_device()
+        
+        service = GligenServiceImpl(
+            *gen_models,
+            *inp_models,
+            device=device,
+        )
+        yield service
+    finally:
+        manager.cleanup_model("gligen")

@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from PIL import Image
-
-from diffusers import FluxPipeline
 
 class FluxService(ABC):
     @abstractmethod
