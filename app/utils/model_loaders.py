@@ -45,7 +45,8 @@ def load_sam3_standalone(device: str) -> Tuple[Sam3Model, Sam3Processor, Sam3Tra
     model = Sam3Model.from_pretrained(
         "facebook/sam3",
         torch_dtype=sam3_dtype,
-        low_cpu_mem_usage=True
+        low_cpu_mem_usage=True,
+        ignore_mismatched_sizes=True,
     ).to(device)
     logger.info("SAM3 model loaded")
 
@@ -57,7 +58,8 @@ def load_sam3_standalone(device: str) -> Tuple[Sam3Model, Sam3Processor, Sam3Tra
     tracker_model = Sam3TrackerModel.from_pretrained(
         "facebook/sam3",
         torch_dtype=sam3_dtype,
-        low_cpu_mem_usage=True
+        low_cpu_mem_usage=True,
+        ignore_mismatched_sizes=True,
     ).to(device)
     logger.info("SAM3 tracker model loaded")
 

@@ -4,6 +4,7 @@ import sys
 from fastapi import FastAPI
 
 from app.lifespan import lifespan
+from app.routes.aesthetic_regressor_routes import router as aesthetic_regressor_router
 from app.routes.box_diff_routes import router as box_diff_router
 from app.routes.flux_routes import router as flux_router
 from app.routes.gligen_routes import router as gligen_router
@@ -22,6 +23,7 @@ logging.basicConfig(
 
 app = FastAPI(lifespan=lifespan)
 
+app.include_router(aesthetic_regressor_router)
 app.include_router(box_diff_router)
 app.include_router(flux_router)
 app.include_router(gligen_router)
