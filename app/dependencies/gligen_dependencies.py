@@ -28,8 +28,21 @@ async def get_gligen_service(request: Request):
         models = manager.get_model("gligen", request)
         gen_models = models[:5]
         inp_models = models[5:]
-        # Get the best available device dynamically
-        device = get_device()
+        
+        # Determine the device from the loaded models to avoid memory-query mismatches
+        device = "cpu"
+        inp_model = inp_models[0] if inp_models else None
+        gen_model = gen_models[0] if gen_models else None
+        
+        for model in [inp_model, gen_model]:
+            if model is not None:
+                try:
+                    device = str(next(model.parameters()).device)
+                    break
+                except StopIteration:
+                    continue
+        else:
+            device = get_device()
         
         service = GligenServiceImpl(
             *gen_models,

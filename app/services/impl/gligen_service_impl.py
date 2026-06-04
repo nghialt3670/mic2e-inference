@@ -44,7 +44,18 @@ class GligenServiceImpl(GligenService):
         self._inpainting_diffusion = inpainting_diffusion
         self._inpainting_config = inpainting_config
         
+        # Defensive check: ensure self._device matches the actual loaded model device if there's a mismatch
         self._device = device
+        for model in [self._inpainting_model, self._generation_model]:
+            if model is not None:
+                try:
+                    model_device = str(next(model.parameters()).device)
+                    if model_device != self._device:
+                        self._device = model_device
+                        break
+                except StopIteration:
+                    pass
+
         self._batch_size = batch_size
         self._guidance_scale = guidance_scale
         self._negative_prompt = negative_prompt
