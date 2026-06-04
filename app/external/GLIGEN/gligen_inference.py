@@ -73,25 +73,24 @@ def alpha_generator(length, type=None):
 
 
 
-def load_ckpt(ckpt_path):
+def load_ckpt(ckpt_path, device=None):
+    if device is None:
+        global_device = globals().get('device', 'cpu')
+    else:
+        global_device = device
     
     # Determine device and load checkpoint accordingly
-    if torch.cuda.is_available():
-        map_location = 'cuda'
-    elif torch.backends.mps.is_available():
-        map_location = 'mps'
-    else:
-        map_location = 'cpu'
+    map_location = global_device
     
     # Load checkpoint with weights_only=False since GLIGEN checkpoints contain OmegaConf objects
     # This is safe as the checkpoint is from the official GLIGEN HuggingFace repository
     saved_ckpt = torch.load(ckpt_path, map_location=map_location, weights_only=False)
     config = saved_ckpt["config_dict"]["_content"]
 
-    model = instantiate_from_config(config['model']).to(device).eval()
-    autoencoder = instantiate_from_config(config['autoencoder']).to(device).eval()
-    text_encoder = instantiate_from_config(config['text_encoder']).to(device).eval()
-    diffusion = instantiate_from_config(config['diffusion']).to(device)
+    model = instantiate_from_config(config['model']).to(global_device).eval()
+    autoencoder = instantiate_from_config(config['autoencoder']).to(global_device).eval()
+    text_encoder = instantiate_from_config(config['text_encoder']).to(global_device).eval()
+    diffusion = instantiate_from_config(config['diffusion']).to(global_device)
 
     # donot need to load official_ckpt for self.model here, since we will load from our ckpt
     # Use strict=False to handle minor version differences in model architectures

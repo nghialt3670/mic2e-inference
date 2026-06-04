@@ -167,6 +167,9 @@ def load_gligen_standalone(device: str) -> Tuple:
     if str(gligen_path) not in sys.path:
         sys.path.insert(0, str(gligen_path))
     
+    import gligen_inference
+    gligen_inference.device = device
+    
     from gligen_inference import load_ckpt
     from ldm.util import instantiate_from_config
     
@@ -194,7 +197,7 @@ def load_gligen_standalone(device: str) -> Tuple:
             gen_text_encoder,
             gen_diffusion,
             gen_config,
-        ) = load_ckpt(str(gligen_gen_ckpt))
+        ) = load_ckpt(str(gligen_gen_ckpt), device=device)
         
         # Initialize and attach grounding_tokenizer_input to model
         grounding_tokenizer_input = instantiate_from_config(
@@ -230,7 +233,7 @@ def load_gligen_standalone(device: str) -> Tuple:
             inp_text_encoder,
             inp_diffusion,
             inp_config,
-        ) = load_ckpt(str(gligen_inp_ckpt))
+        ) = load_ckpt(str(gligen_inp_ckpt), device=device)
         
         # Initialize and attach grounding_tokenizer_input to model
         grounding_tokenizer_input = instantiate_from_config(
