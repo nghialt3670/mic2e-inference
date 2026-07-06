@@ -187,7 +187,7 @@ class FrozenCLIPEmbedder(AbstractEncoder):
     def forward(self, text, return_pooler_output=False):
         batch_encoding = self.tokenizer(text, truncation=True, max_length=self.max_length, return_length=True,
                                         return_overflowing_tokens=False, padding="max_length", return_tensors="pt")
-        tokens = batch_encoding["input_ids"].to(self.device)
+        tokens = batch_encoding["input_ids"].to(next(self.transformer.parameters()).device)
         outputs = self.transformer(input_ids=tokens)
 
         z = outputs.last_hidden_state
@@ -226,7 +226,7 @@ class FrozenCLIPTextEmbedder(nn.Module):
             param.requires_grad = False
 
     def forward(self, text):
-        tokens = clip.tokenize(text).to(self.device)
+        tokens = clip.tokenize(text).to(next(self.model.parameters()).device)
         z = self.model.encode_text(tokens)
         if self.normalize:
             z = z / torch.linalg.norm(z, dim=1, keepdim=True)
