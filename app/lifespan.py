@@ -26,9 +26,18 @@ async def lifespan(app: FastAPI):
     """Manage application lifespan - startup and shutdown."""
     logger.info("Starting application...")
 
-    # Login to Hugging Face
-    login(token=HUGGINGFACE_TOKEN)
-    logger.info("Logged in to Hugging Face")
+    # Login to Hugging Face (best-effort: a timeout won't crash startup)
+    if HUGGINGFACE_TOKEN:
+        try:
+            login(token=HUGGINGFACE_TOKEN)
+            logger.info("Logged in to Hugging Face")
+        except Exception as e:
+            logger.warning(
+                f"Hugging Face login failed (network issue?): {e}. "
+                "Proceeding without login — cached credentials or HF_TOKEN env var will be used."
+            )
+    else:
+        logger.warning("HUGGINGFACE_TOKEN not set, skipping Hugging Face login")
 
     # Detect device (models will get best device dynamically at load time)
     device = get_device()
