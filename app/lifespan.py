@@ -40,8 +40,12 @@ async def lifespan(app: FastAPI):
         logger.warning("HUGGINGFACE_TOKEN not set, skipping Hugging Face login")
 
     # Detect device (models will get best device dynamically at load time)
-    device = get_device()
-    logger.info(f"Initial device detection: {device} (models will select best device at load time)")
+    try:
+        device = get_device()
+        logger.info(f"Initial device detection: {device} (models will select best device at load time)")
+    except Exception as e:
+        logger.warning(f"Device detection failed: {e}. Falling back to CPU.")
+        device = "cpu"
 
     # Register model loaders for on-demand loading
     logger.info("Registering model loaders for on-demand loading...")

@@ -1,4 +1,8 @@
+import logging
+
 import torch
+
+logger = logging.getLogger(__name__)
 
 
 def get_device() -> str:
@@ -11,10 +15,13 @@ def get_device() -> str:
             max_free_memory = 0
             best_device = 0
             for i in range(device_count):
-                free_memory, total_memory = torch.cuda.mem_get_info(i)
-                if free_memory > max_free_memory:
-                    max_free_memory = free_memory
-                    best_device = i
+                try:
+                    free_memory, _ = torch.cuda.mem_get_info(i)
+                    if free_memory > max_free_memory:
+                        max_free_memory = free_memory
+                        best_device = i
+                except Exception as e:
+                    logger.warning(f"Could not query memory for cuda:{i}: {e}. Skipping.")
             return f"cuda:{best_device}"
         else:
             return "cuda"
